@@ -1,0 +1,10 @@
+# .gitignore
+
+# Ignore all SMART Notebook files.
+*.notebook
+
+# And any PDFs.
+*.pdf
+
+# Also temporary text files.
+*~
