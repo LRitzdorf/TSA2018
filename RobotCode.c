@@ -9,7 +9,7 @@ Team members are Lucas Ritzdorf, Riker Foster, and Lauryn Vornbrock.
 
 // Standard sleep value (in milliseconds)
 // Can be adjusted for responsiveness as needed
-const int sleepValue = 20
+const int sleepValue = 20;
 
 task pre_drive() {
 	// Pre-driving setup
@@ -25,5 +25,11 @@ task driverControl() {
 }
 
 task main() {
-	pre_drive();
+	startTask(pre_drive);
+	startTask(autonomous);
+	sleep(15000);
+	startTask(driverControl);
+	while(true) {
+		sleep(100);
+	}
 }
