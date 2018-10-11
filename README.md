@@ -1,7 +1,6 @@
 # GHS Technology Student Association: VEX Robotics Team G
 
-This repository contains [RobotC](http://www.robotc.net) and [VEX Coding Studio](https://www.vexrobotics.com/vexedr/products/programming) code for the Glacier High School Technology 
-Student Association's VEX Robotics Team G.
+This repository contains [RobotC](http://www.robotc.net) and [VEX Coding Studio](https://www.vexrobotics.com/vexedr/products/programming) code for the Glacier High School Technology Student Association's VEX Robotics Team G.
 
 See [Google Classroom](https://classroom.google.com) for additional information.
 
