@@ -12,9 +12,13 @@ In this code, all functions for manually controlled movement are inside the
 driverControl task.
 -----------------------------------------------------------------------------------*/
 
-// Remote mappings:
-// Left stick Y-value:  vexRT[Ch3]
-// Right stick Y-value: vexRT[Ch2]
+/*
+Remote mappings:
+Left stick Y-value - left drive - Ch3
+Right stick Y-value - right drive - Ch2
+Left shoulder buttons - autonomous on (and interrupt)/driver-control on - Btn5U/Btn5D
+More mappings...
+*/
 
 // Standard sleep value (in milliseconds)
 // Can be adjusted for responsiveness as needed
@@ -33,13 +37,26 @@ task driverControl() {
 	// Driver-control code
 	motor[leftMotor] = vexRT[Ch3];
 	motor[rightMotor] = vexRT[Ch2];
+	// Other controls here
   sleep(sleepValue);
 }
 
 task main() {
+	// Pre-drive setup
 	startTask(pre_drive);
+
+	// Autonomous (Btn5U 2nd time to cancel)
+	waitUntil(vexRT[Btn5U] == 1);
+	clearTimer(T1);
 	startTask(autonomous);
-	sleep(15000);
+	while((time1[T1] <= 15000) && (vexRT[Btn5U] != 1)) {
+		sleep(100);
+	}
+	stopTask(autonomous);
+	stopAllMotors();
+
+	// Driver-control
+	waitUntil(vexRT[Btn5D] == 1);
 	startTask(driverControl);
 	while(true) {
 		sleep(1000);
