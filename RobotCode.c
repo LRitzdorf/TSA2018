@@ -44,20 +44,22 @@ task autonomous() {
 }
 
 task usercontrol() {
-	// Driver-control code
-
-	// Drive motor control
-	motor[leftMotor] = vexRT[Ch3];
-	motor[rightMotor] = vexRT[Ch2];
-
-	// Lift control
-	if (vexRT[Btn8U] == 1) { motor[liftMotor] = 127; }
-  else if (vexRT[Btn8D] == 1) { motor[liftMotor] = -100; }
-
-  // Fork control
-  if (vexRT[Btn8L] == 1) { motor[forkMotor] = 127; }
-  else if (vexRT[Btn8R] == 1) { motor[forkMotor] = -127; }
-
-  // Pause for sleepValue milliseconds
-  sleep(sleepValue);
+	while (true) {
+		// Driver-control code
+		
+		// Drive motor control
+		motor[leftMotor] = vexRT[Ch3];
+		motor[rightMotor] = vexRT[Ch2];
+		
+		// Lift control
+		if (vexRT[Btn8U] == 1) { motor[liftMotor] = 127; }
+		else if (vexRT[Btn8D] == 1) { motor[liftMotor] = -100; }
+		
+		// Fork control
+		if (vexRT[Btn8L] == 1) { motor[forkMotor] = 127; }
+		else if (vexRT[Btn8R] == 1) { motor[forkMotor] = -127; }
+		
+		// Pause for sleepValue milliseconds
+		sleep(sleepValue);
+	}
 }
