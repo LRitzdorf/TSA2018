@@ -2,6 +2,7 @@
 #pragma config(Motor,  port3,           rightMotor,    tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port4,           liftMotor,     tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port5,           swivelMotor,   tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port6,           clawMotor,     tmotorVex393_MC29, openLoop)
 #pragma config(Sensor, dgtl10,          redLED,        sensorLEDtoVCC)
 #pragma config(Sensor, dgtl11,          yellowLED,     sensorLEDtoVCC)
 #pragma config(Sensor, dgtl12,          greenLED,      sensorLEDtoVCC)
