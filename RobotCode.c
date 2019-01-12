@@ -26,21 +26,22 @@ usercontrol task.
 
 /*
 Remote mappings:
-Left stick Y-value -- left drive ------ Ch3
-Right stick Y-value - right drive ----- Ch2
-Right buttons U, D -- lift up, down --- Btn8U, Btn8D
-Right buttons L, R -- claw swivel ----- Btn8L, Btn8R
-Left button L ------- claw open/close - Btn7L
+Left stick Y-value -- left drive ------- Ch3
+Right stick Y-value - right drive ------ Ch2
+Right buttons U, D -- lift up, down ---- Btn8U, Btn8D
+Right buttons L, R -- claw swivel ------ Btn8L, Btn8R
+Left buttons L, R --- claw open, close - Btn7L, Btn7R
+TODO: Check claw motor directions
 */
 
 turnLEDOn(yellowLED);
+
+// Variable Setup
 
 // Standard sleep value (in milliseconds)
 // Can be adjusted for responsiveness as needed
 const int sleepValue = 20;
 
-// Current state of the claw
-clawState = 1;
 
 void pre_auton() {
 	turnLEDOn(redLED);
@@ -78,8 +79,8 @@ task usercontrol() {
 		else if (vexRT[Btn8R] == 1) { motor[swivelMotor] = -127; }
 
 		// Claw grip control
-		if (vexRT[Btn7L] == 1) { motor[clawMotor] =127*clawState; }
-		// TODO: Add time clause here
+		if (vexRT[Btn7L] == 1) { motor[clawMotor] =127; }
+		else if (vexRT[Btn7R] == 1) { motor[clawMotor] = -127; }
 
 		// Pause for sleepValue milliseconds
 		sleep(sleepValue);

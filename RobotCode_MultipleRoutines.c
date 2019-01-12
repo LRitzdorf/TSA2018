@@ -26,16 +26,22 @@ separate tasks.
 
 /*
 Remote mappings:
-Left stick Y-value -- left drive ------ Ch3
-Right stick Y-value - right drive ----- Ch2
-Right buttons U, D -- lift up, down --- Btn8U, Btn8D
-Right buttons L, R -- claw swivel ----- Btn8L, Btn8R
-Left button L ------- claw open/close - Btn7L
+Left stick Y-value -- left drive ------- Ch3
+Right stick Y-value - right drive ------ Ch2
+Right buttons U, D -- lift up, down ---- Btn8U, Btn8D
+Right buttons L, R -- claw swivel ------ Btn8L, Btn8R
+Left buttons L, R --- claw open, close - Btn7L
+TODO: Check claw motor directions
 */
+
+turnLEDOn(yellowLED);
+
+// Variable Setup
 
 // Standard sleep value (in milliseconds)
 // Can be adjusted for responsiveness as needed
 const int sleepValue = 20;
+
 
 void pre_auton() {
 	turnLEDOn(redLED);
