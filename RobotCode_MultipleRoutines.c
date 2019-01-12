@@ -1,7 +1,7 @@
 #pragma config(Motor,  port2,           leftMotor,     tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,           rightMotor,    tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port4,           liftMotor,     tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port5,           forkMotor,     tmotorVex393_MC29, openLoop)
+#pragma config(Motor,  port5,           swivelMotor,   tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port6,           clawMotor,     tmotorVex393_MC29, openLoop)
 #pragma config(Sensor, dgtl10,          redLED,        sensorLEDtoVCC)
 #pragma config(Sensor, dgtl11,          yellowLED,     sensorLEDtoVCC)
@@ -30,7 +30,7 @@ Left stick Y-value -- left drive ------- Ch3
 Right stick Y-value - right drive ------ Ch2
 Right buttons U, D -- lift up, down ---- Btn8U, Btn8D
 Right buttons L, R -- claw swivel ------ Btn8L, Btn8R
-Left buttons L, R --- claw open, close - Btn7L
+Left buttons L, R --- claw open, close - Btn7L, Btn7R
 TODO: Check claw motor directions
 */
 
@@ -72,6 +72,24 @@ task rightDrive() {
 		motor[rightMotor] = vexRT[Ch2];
 		sleep(sleepValue);
 	}
+}
+
+task clawLift() {
+	while (true) {
+		if (vexRT[Btn8U] == 1) { motor[liftMotor] = 127; }
+		else if (vexRT[Btn8D] == 1) { motor[liftMotor] = -127; }
+}
+
+task clawSwivel() {
+	while (true) {
+		if (vexRT[Btn8L] == 1) { motor[swivelMotor] = 127; }
+		else if (vexRT[Btn8R] == 1) { motor[swivelMotor] = -127; }
+}
+
+task clawGrip() {
+	while (true) {
+		if (vexRT[Btn7L] == 1) { motor[clawMotor] = 127; }
+		else if (vexRT[Btn7R] == 1) { motor[clawMotor] = -127; }
 }
 
 // Additional movement tasks here
