@@ -34,8 +34,6 @@ Left buttons L, R --- claw open, close - Btn7L, Btn7R
 TODO: Check claw motor directions
 */
 
-turnLEDOn(yellowLED);
-
 // Variable Setup
 
 // Standard sleep value (in milliseconds)
