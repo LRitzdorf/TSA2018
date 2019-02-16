@@ -22,7 +22,7 @@ control system, and will immediately start the AUTONOMOUS portion of the code.
 -----------------------------------------------------------------------------------*/
 
 // Variable Definitions
-float turnTime = 1125;
+float turnTime = 1000;
 float clawTime = 500;
 int clawDir = -1;
 float liftTime = 3000;
@@ -47,26 +47,35 @@ task lift()
 task auto()
 {
 	turnLEDOff(redLED);
-	turnLEDOff(yellowLED);
+	turnLEDOn(yellowLED);
 	turnLEDOff(greenLED);
 	while(true) {
-		turnLEDOn(yellowLED);
 		waitUntil(vexRT[Btn8R] == 1);
 		turnLEDOn(greenLED);
 		// Turn left
 		setMotor(rightMotor, 127);
-		sleep(1500);
+		sleep(1700);
 		// Drive forwards
 		setMultipleMotors(127, leftMotor, rightMotor);
-		sleep(2000);
-		// Back up (and open claw)
-		clawDir = -1; startTask(claw); clearTimer(T1);
-		setMultipleMotors(-127, leftMotor, rightMotor);
+		sleep(1750);
+		// Turn slightly right and drive forwards
+		setMotor(leftMotor, 64);
+		stopMotor(rightMotor);
+		sleep(500);
+		setMotor(rightMotor, 64);
 		sleep(1000);
+		// Back up and turn (and open claw)
+		clawDir = -1; startTask(claw); clearTimer(T1);
+		setMotor(leftMotor, -127);
+		setMotor(rightMotor, -32);
+		sleep(1500);
+		// Back up
+		setMultipleMotors(leftMotor, rightMotor, -127);
+		sleep(1500);
 		// Turn right
 		motor[leftMotor] = 127;
 		motor[rightMotor] = -127;
-		sleep(turnTime);
+		sleep(turnTime+500);
 		// Drive forwards (after the claw has opened)
 		while(time1[T1] < clawTime) { sleep(0.1); }
 		setMultipleMotors(64, leftMotor, rightMotor);
@@ -80,7 +89,7 @@ task auto()
 		// Back up and lower lift
 		liftDir = -1; liftTime = 3; startTask(lift); clearTimer(T2);
 		setMultipleMotors(-127, leftMotor, rightMotor);
-		sleep(2500);
+		sleep(1750);
 		// Turn right
 		setMotor(leftMotor, 127);
 		setMotor(rightMotor, -127);
