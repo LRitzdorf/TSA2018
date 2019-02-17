@@ -23,20 +23,21 @@ control system, and will immediately start the user-control portion of the code.
 
 /*
 Remote mappings:
-Left stick Y-value -- left drive ------- Ch3
-Right stick Y-value - right drive ------ Ch2
-Right buttons U, D -- lift up, down ---- Btn8U, Btn8D
-Right buttons L, R -- claw swivel ------ Btn8L, Btn8R
-Left buttons L, R --- claw open, close - Btn7L
-TODO: Check claw motor directions
+Left stick Y-value ------- left drive ------- Ch3
+Right stick Y-value ------ right drive ------ Ch2
+Right shoulder buttons --- lift up, down ---- Btn6U, Btn6D
+Right buttons U, D ------- claw up, down ---- Btn8U, Btn8D
+Right buttons L, R ------- claw open, close - Btn8L, Btn8R
+Top left shoulder button - direction switch - Btn5U
 */
 
 // Variable Setup
-
 // Standard sleep value (in milliseconds)
 // Can be adjusted for responsiveness as needed
 const int sleepValue = 20;
-
+// Current direction-switching state
+// false is normal, true is reversed
+bool reversed = false;
 
 task main() {
 	turnLEDOn(greenLED);
@@ -44,20 +45,29 @@ task main() {
 		// Driver-control code
 
 		// Drive motor control
-		motor[leftMotor] = vexRT[Ch3];
-		motor[rightMotor] = vexRT[Ch2];
+		if (reversed) {
+			motor[leftMotor] = -vexRT[Ch2];
+			motor[rightMotor] = -vexRT[Ch3];
+		}
+		else {
+			motor[leftMotor] = vexRT[Ch3];
+			motor[rightMotor] = vexRT[Ch2];
+		}
+
+		// Drive motor reversal
+		if (vexRT[Btn5U] == 1) { reversed = !reversed; }
 
 		// Lift control
-		if (vexRT[Btn8U] == 1) { motor[liftMotor] = 127; }
-		else if (vexRT[Btn8D] == 1) { motor[liftMotor] = -100; }
+		if (vexRT[Btn6U] == 1) { motor[liftMotor] = 127; }
+		else if (vexRT[Btn6D] == 1) { motor[liftMotor] = -100; }
 
 		// Claw swivel control
-		if (vexRT[Btn8L] == 1) { motor[swivelMotor] = 127; }
-		else if (vexRT[Btn8R] == 1) { motor[swivelMotor] = -127; }
+		if (vexRT[Btn8U] == 1) { motor[swivelMotor] = 127; }
+		else if (vexRT[Btn8D] == 1) { motor[swivelMotor] = -100; }
 
 		// Claw grip control
-		if (vexRT[Btn7L] == 1) { motor[clawMotor] = 127; }
-		else if (vexRT[Btn7R] == 1) { motor[clawMotor] = -127; }
+		if (vexRT[Btn8L] == 1) { motor[clawMotor] = 127; }
+		else if (vexRT[Btn8R] == 1) { motor[clawMotor] = -127; }
 
 		// Pause for sleepValue milliseconds
 		sleep(sleepValue);

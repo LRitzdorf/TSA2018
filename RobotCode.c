@@ -20,27 +20,36 @@ Robot code for GHS VEX Team G
 
 Team members are Lucas Ritzdorf, Riker Foster, and Lauryn Vornbrock.
 
-In this code, all functions for manually controlled movement are inside the
-usercontrol task.
+This is the full, (hopefully) competition-ready version of the RobotC code.
 -----------------------------------------------------------------------------------*/
 
 /*
 Remote mappings:
-Left stick Y-value -- left drive ------- Ch3
-Right stick Y-value - right drive ------ Ch2
-Right buttons U, D -- lift up, down ---- Btn8U, Btn8D
-Right buttons L, R -- claw swivel ------ Btn8L, Btn8R
-Left buttons L, R --- claw open, close - Btn7L, Btn7R
-TODO: Check claw motor directions
+Left stick Y-value ------- left drive ------- Ch3
+Right stick Y-value ------ right drive ------ Ch2
+Right shoulder buttons --- lift up, down ---- Btn6U, Btn6D
+Right buttons U, D ------- claw up, down ---- Btn8U, Btn8D
+Right buttons L, R ------- claw open, close - Btn8L, Btn8R
+Top left shoulder button - direction switch - Btn5U
 */
 
-// Variable Setup
 
+// Variable Setup
 // Standard sleep value (in milliseconds)
 // Can be adjusted for responsiveness as needed
 const int sleepValue = 20;
+// Current direction-switching state
+// false is normal, true is reversed
+bool reversed = false;
+// Autonomous Definitions
+const float turnTime = 1000;
+float clawTime = 500;
+int clawDir = -1;
+float liftTime = 3000;
+int liftDir = 1;
 
 
+// Pre-autonomous setup
 void pre_auton() {
 	turnLEDOn(redLED);
 	bStopTasksBetweenModes = true;
@@ -50,37 +59,131 @@ void pre_auton() {
 	return;
 }
 
-task autonomous() {
-	turnLEDOn(greenLED);
 
-	// Autonomous code
-
-	turnLEDOff(greenLED);
+// Task to open or close the claw concurrently
+task claw()
+{
+	setMotor(clawMotor, clawDir*127);
+	sleep(clawTime);
+	stopMotor(clawMotor);
 }
 
+// Task to raise or lower the lift concurrently
+task lift()
+{
+	setMotor(liftMotor, liftDir*127);
+	sleep(liftTime);
+	stopMotor(liftMotor);
+}
+
+// Autonomous mode
+task autonomous() {
+	turnLEDOn(yellowLED);
+
+	// Begin autonomous code
+
+	waitUntil(vexRT[Btn8R] == 1);
+	turnLEDOn(greenLED);
+	// Turn left
+	setMotor(rightMotor, 127);
+	sleep(1700);
+	// Drive forwards
+	setMultipleMotors(127, leftMotor, rightMotor);
+	sleep(1750);
+	// Turn slightly right and drive forwards
+	setMotor(leftMotor, 64);
+	stopMotor(rightMotor);
+	sleep(500);
+	setMotor(rightMotor, 64);
+	sleep(1000);
+	// Back up and turn (and open claw)
+	clawDir = -1; startTask(claw); clearTimer(T1);
+	setMotor(leftMotor, -127);
+	setMotor(rightMotor, -32);
+	sleep(1500);
+	// Back up
+	setMultipleMotors(leftMotor, rightMotor, -127);
+	sleep(1500);
+	// Turn right
+	motor[leftMotor] = 127;
+	motor[rightMotor] = -127;
+	sleep(turnTime+500);
+	// Drive forwards (after the claw has opened)
+	while(time1[T1] < clawTime) { sleep(0.1); }
+	setMultipleMotors(64, leftMotor, rightMotor);
+	sleep(1500);
+	// Flip the cap
+	setMultipleMotors(32, leftMotor, rightMotor);
+	setMotor(liftMotor, 127);
+	sleep(1500);
+	stopAllMotors();
+	sleep(250);
+	// Back up and lower lift
+	liftDir = -1; liftTime = 3; startTask(lift); clearTimer(T2);
+	setMultipleMotors(-127, leftMotor, rightMotor);
+	sleep(1750);
+	// Turn right
+	setMotor(leftMotor, 127);
+	setMotor(rightMotor, -127);
+	sleep(turnTime);
+	// Drive forward
+	setMultipleMotors(127, leftMotor, rightMotor);
+	sleep(1000);
+	// Turn left
+	setMotor(leftMotor, -127);
+	setMotor(rightMotor, 127);
+	sleep(turnTime);
+	// Drive forward
+	setMultipleMotors(127, leftMotor, rightMotor);
+	sleep(2500);
+	// Lift the cap
+	setMotor(liftMotor, 64);
+	setMultipleMotors(32, leftMotor, rightMotor);
+	sleep(1000);
+	// Turn and set the cap down
+	setMotor(leftMotor, -32);
+	setMotor(rightMotor, 16);
+	sleep(2000);
+	// Done
+	stopAllMotors();
+
+	// End autonomous code
+
+	turnLEDOff(yellowLED);
+}
+
+
+// Driver-control code
 task usercontrol() {
 	turnLEDOn(greenLED);
-	turnLEDOff(yellowLED);
 	while (true) {
-		// Driver-control code
 
 		// Drive motor control
-		motor[leftMotor] = vexRT[Ch3];
-		motor[rightMotor] = vexRT[Ch2];
+		if (reversed) {
+			motor[leftMotor] = -vexRT[Ch2];
+			motor[rightMotor] = -vexRT[Ch3];
+		}
+		else {
+			motor[leftMotor] = vexRT[Ch3];
+			motor[rightMotor] = vexRT[Ch2];
+		}
+
+		// Drive motor reversal
+		if (vexRT[Btn5U] == 1) { reversed = !reversed; sleep(20); }
 
 		// Lift control
-		if (vexRT[Btn8U] == 1) { motor[liftMotor] = 127; }
-		else if (vexRT[Btn8D] == 1) { motor[liftMotor] = -100; }
+		if (vexRT[Btn6U] == 1) { motor[liftMotor] = 127; }
+		else if (vexRT[Btn6D] == 1) { motor[liftMotor] = -100; }
 
 		// Claw swivel control
-		if (vexRT[Btn8L] == 1) { motor[swivelMotor] = 127; }
-		else if (vexRT[Btn8R] == 1) { motor[swivelMotor] = -127; }
+		if (vexRT[Btn8U] == 1) { motor[swivelMotor] = 127; }
+		else if (vexRT[Btn8D] == 1) { motor[swivelMotor] = -100; }
 
 		// Claw grip control
-		if (vexRT[Btn7L] == 1) { motor[clawMotor] =127; }
-		else if (vexRT[Btn7R] == 1) { motor[clawMotor] = -127; }
+		if (vexRT[Btn8L] == 1) { motor[clawMotor] = 127; }
+		else if (vexRT[Btn8R] == 1) { motor[clawMotor] = -127; }
 
-		// Pause for sleepValue milliseconds
+		// Pause
 		sleep(sleepValue);
 	}
 }

@@ -22,7 +22,7 @@ control system, and will immediately start the AUTONOMOUS portion of the code.
 -----------------------------------------------------------------------------------*/
 
 // Variable Definitions
-float turnTime = 1000;
+const float turnTime = 1000;
 float clawTime = 500;
 int clawDir = -1;
 float liftTime = 3000;
