@@ -48,75 +48,70 @@ task auto()
 {
 	turnLEDOff(redLED);
 	turnLEDOn(yellowLED);
+	// Turn left
+	setMotor(rightMotor, 127);
+	sleep(1700);
+	// Drive forwards
+	setMultipleMotors(127, leftMotor, rightMotor);
+	sleep(1750);
+	// Turn slightly right and drive forwards
+	setMotor(leftMotor, 64);
+	stopMotor(rightMotor);
+	sleep(500);
+	setMotor(rightMotor, 64);
+	sleep(1000);
+	// Back up and turn (and open claw)
+	clawDir = -1; startTask(claw); clearTimer(T1);
+	setMotor(leftMotor, -127);
+	setMotor(rightMotor, -32);
+	sleep(1500);
+	// Back up
+	setMultipleMotors(leftMotor, rightMotor, -127);
+	sleep(1500);
+	// Turn right
+	motor[leftMotor] = 127;
+	motor[rightMotor] = -127;
+	sleep(turnTime+500);
+	// Drive forwards (after the claw has opened)
+	while(time1[T1] < clawTime) { sleep(0.1); }
+	setMultipleMotors(64, leftMotor, rightMotor);
+	sleep(1500);
+	// Flip the cap
+	setMultipleMotors(32, leftMotor, rightMotor);
+	setMotor(liftMotor, 127);
+	sleep(1500);
+	stopAllMotors();
+	sleep(250);
+	// Back up and lower lift
+	liftDir = -1; liftTime = 3; startTask(lift); clearTimer(T2);
+	setMultipleMotors(-127, leftMotor, rightMotor);
+	sleep(1750);
+	// Turn right
+	setMotor(leftMotor, 127);
+	setMotor(rightMotor, -127);
+	sleep(turnTime);
+	// Drive forward
+	setMultipleMotors(127, leftMotor, rightMotor);
+	sleep(1000);
+	// Turn left
+	setMotor(leftMotor, -127);
+	setMotor(rightMotor, 127);
+	sleep(turnTime);
+	// Drive forward
+	setMultipleMotors(127, leftMotor, rightMotor);
+	sleep(2500);
+	// Lift the cap
+	setMotor(liftMotor, 64);
+	setMultipleMotors(32, leftMotor, rightMotor);
+	sleep(1000);
+	// Turn and set the cap down
+	setMotor(leftMotor, -32);
+	setMotor(rightMotor, 16);
+	sleep(2000);
+	// Done
+	stopAllMotors();
 	turnLEDOff(greenLED);
-	while(true) {
-		waitUntil(vexRT[Btn8R] == 1);
-		turnLEDOn(greenLED);
-		// Turn left
-		setMotor(rightMotor, 127);
-		sleep(1700);
-		// Drive forwards
-		setMultipleMotors(127, leftMotor, rightMotor);
-		sleep(1750);
-		// Turn slightly right and drive forwards
-		setMotor(leftMotor, 64);
-		stopMotor(rightMotor);
-		sleep(500);
-		setMotor(rightMotor, 64);
-		sleep(1000);
-		// Back up and turn (and open claw)
-		clawDir = -1; startTask(claw); clearTimer(T1);
-		setMotor(leftMotor, -127);
-		setMotor(rightMotor, -32);
-		sleep(1500);
-		// Back up
-		setMultipleMotors(leftMotor, rightMotor, -127);
-		sleep(1500);
-		// Turn right
-		motor[leftMotor] = 127;
-		motor[rightMotor] = -127;
-		sleep(turnTime+500);
-		// Drive forwards (after the claw has opened)
-		while(time1[T1] < clawTime) { sleep(0.1); }
-		setMultipleMotors(64, leftMotor, rightMotor);
-		sleep(1500);
-		// Flip the cap
-		setMultipleMotors(32, leftMotor, rightMotor);
-		setMotor(liftMotor, 127);
-		sleep(1500);
-		stopAllMotors();
-		sleep(250);
-		// Back up and lower lift
-		liftDir = -1; liftTime = 3; startTask(lift); clearTimer(T2);
-		setMultipleMotors(-127, leftMotor, rightMotor);
-		sleep(1750);
-		// Turn right
-		setMotor(leftMotor, 127);
-		setMotor(rightMotor, -127);
-		sleep(turnTime);
-		// Drive forward
-		setMultipleMotors(127, leftMotor, rightMotor);
-		sleep(1000);
-		// Turn left
-		setMotor(leftMotor, -127);
-		setMotor(rightMotor, 127);
-		sleep(turnTime);
-		// Drive forward
-		setMultipleMotors(127, leftMotor, rightMotor);
-		sleep(2500);
-		// Lift the cap
-		setMotor(liftMotor, 64);
-		setMultipleMotors(32, leftMotor, rightMotor);
-		sleep(1000);
-		// Turn and set the cap down
-		setMotor(leftMotor, -32);
-		setMotor(rightMotor, 16);
-		sleep(2000);
-		// Done
-		stopAllMotors();
-		turnLEDOff(greenLED);
-		turnLEDOn(yellowLED);
-	}
+	turnLEDOn(yellowLED);
 }
 
 // Emergency-stop task
@@ -124,11 +119,10 @@ task e_stop()
 {
 	while(true) {
 		if (vexRT[Btn8L] == 1) {
-			turnLEDOff(greenLED);
+			turnLEDOff(yellowLED);
 			turnLEDOn(redLED);
-			stopAllMotors();
 			stopTask(auto);
-			startTask(auto);
+			stopAllMotors();
 		}
 		sleep(0.1);
 	}
@@ -136,7 +130,12 @@ task e_stop()
 
 task main()
 {
+	turnLEDOff(redLED);
+	turnLEDOff(yellowLED);
+	turnLEDOff(greenLED);
 	startTask(e_stop);
-	startTask(auto);
-	while(true) { sleep(1000); }
+	while(true) {
+		if (vexRT[Btn8R] == 1) { startTask(auto); }
+		sleep(100);
+	}
 }
