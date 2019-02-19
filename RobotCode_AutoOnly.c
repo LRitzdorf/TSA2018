@@ -49,8 +49,13 @@ task auto()
 	turnLEDOff(redLED);
 	turnLEDOn(yellowLED);
 	// Turn left
-	setMotor(rightMotor, 127);
-	sleep(1700);
+	setMotor(leftMotor, -24);
+	setMotor(rightMotor, 64);
+	sleep(750);
+	setMotor(leftMotor, -96);
+	sleep(400); // To a right angle
+	sleep(100); // Angled slightly toward the wall
+	stopMultipleMotors(leftMotor, rightMotor);
 	// Drive forwards
 	setMultipleMotors(127, leftMotor, rightMotor);
 	sleep(1750);
